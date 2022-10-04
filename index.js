@@ -1,7 +1,8 @@
 var SERVER_NAME = 'user-api'
 var PORT = 5000;
 var HOST = '127.0.0.1';
-
+var get_counter = 0;
+var post_counter = 0;
 
 var restify = require('restify')
 
@@ -12,9 +13,11 @@ var restify = require('restify')
   , server = restify.createServer({ name: SERVER_NAME})
 
   server.listen(PORT, HOST, function () {
-  console.log('Server is listening at ', server.name, server.url)
-  console.log('Endpoints:')
-  console.log(' http://127.0.0.1:5000/images method: GET, POST')
+    console.log('\n=================================================================')
+    console.log('Server is listening at ', server.name, server.url)
+    console.log('Endpoints:')
+    console.log(' http://127.0.0.1:5000/images method: GET, POST')
+    console.log('------------------------------------------------------------------\n')
 })
 
 server
@@ -37,6 +40,10 @@ server.get('/images', function (req, res, next) {
 
     // Return all of the images in the system
     res.send(images)
+
+    // increment request counter and display
+    get_counter++;
+    console.log('\n\nProcessed Request Count--> GET:' + get_counter + ', POST:' + post_counter + "\n");
   })
 })
 
@@ -59,6 +66,10 @@ server.get('/images/:id', function (req, res, next) {
     } else {
       // Send 404 header if the image doesn't exist
       res.send(404)
+
+      // increment request counter and display
+      get_counter++;
+      console.log('\n\nProcessed Request Count--> GET:' + get_counter + ', POST:' + post_counter + "\n");
     }
   })
 })
@@ -97,6 +108,10 @@ server.post('/images', function (req, res, next) {
     // log in the console first
     console.log('< images POST: sending response')
     res.send(201, image)
+
+    // increment request counter and display
+    post_counter++;
+    console.log('\n\nProcessed Request Count--> GET:' + get_counter + ', POST:' + post_counter + "\n");
   })
 })
 
@@ -136,6 +151,10 @@ server.put('/images/:id', function (req, res, next) {
     // Log it in the console first
     console.log('< images GET: sending response')
     res.send(200)
+
+    // increment request counter and display
+    post_counter++;
+    console.log('\n\nProcessed Request Count--> GET:' + get_counter + ', POST:' + post_counter + "\n");
   })
 })
 
