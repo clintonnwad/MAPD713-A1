@@ -1,7 +1,7 @@
 {
-    "name": "UserApi",
+    "name": "MAPD713-Assignment1",
     "version": "1.0.0",
-    "description": "REST API - Users",
+    "description": "REST API - Assignment 1",
     "dependencies": {
         "restify": "4.1.1",
 		"save": "2.3.0"

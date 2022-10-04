@@ -1,21 +1,20 @@
 var SERVER_NAME = 'user-api'
-var PORT = 8000;
+var PORT = 5000;
 var HOST = '127.0.0.1';
 
 
 var restify = require('restify')
 
-  // Get a persistence engine for the users
-  , usersSave = require('save')('users')
+  // Get a persistence engine for the images
+  , imagesSave = require('save')('images')
 
   // Create the restify server
   , server = restify.createServer({ name: SERVER_NAME})
 
   server.listen(PORT, HOST, function () {
-  console.log('Server %s listening at %s', server.name, server.url)
-  console.log('Resources:')
-  console.log(' /users')
-  console.log(' /users/:id')  
+  console.log('Server is listening at ', server.name, server.url)
+  console.log('Endpoints:')
+  console.log(' http://127.0.0.1:5000/images method: GET, POST')
 })
 
 server
@@ -25,85 +24,95 @@ server
   // Maps req.body to req.params so there is no switching between them
   .use(restify.bodyParser())
 
-// Get all users in the system
-server.get('/users', function (req, res, next) {
+// Get all images in the system
+server.get('/images', function (req, res, next) {
 
   // Find every entity within the given collection
-  usersSave.find({}, function (error, users) {
+  imagesSave.find({}, function (error, images) {
 
-    // Return all of the users in the system
-    res.send(users)
+    // Return all of the images in the system
+    res.send(images)
   })
 })
 
-// Get a single user by their user id
-server.get('/users/:id', function (req, res, next) {
+// Get a single image using the image id specified
+server.get('/images/:id', function (req, res, next) {
 
-  // Find a single user by their id within save
-  usersSave.findOne({ _id: req.params.id }, function (error, user) {
+  // Find a single image using the id within save
+  imagesSave.findOne({ _id: req.params.id }, function (error, image) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
-    if (user) {
-      // Send the user if no issues
-      res.send(user)
+    if (image) {
+      // Send the image if no issues encountered
+      res.send(image)
     } else {
-      // Send 404 header if the user doesn't exist
+      // Send 404 header if the image doesn't exist
       res.send(404)
     }
   })
 })
 
-// Create a new user
-server.post('/users', function (req, res, next) {
+// Create a new image record
+server.post('/images', function (req, res, next) {
 
   // Make sure name is defined
   if (req.params.name === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('name must be supplied'))
+    return next(new restify.InvalidArgumentError('You need to provide the Image name'))
   }
-  if (req.params.age === undefined ) {
+  if (req.params.url === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('age must be supplied'))
+    return next(new restify.InvalidArgumentError('You need to provide the Image URL'))
   }
-  var newUser = {
+  if (req.params.size === undefined ) {
+    // If there are any errors, pass them to next in the correct format
+    return next(new restify.InvalidArgumentError('You need to provide the size of the image'))
+  }
+  var newImage = {
 		name: req.params.name, 
-		age: req.params.age
+		url: req.params.url,
+    size: req.params.size,
 	}
 
   // Create the user using the persistence engine
-  usersSave.create( newUser, function (error, user) {
+  imagesSave.create( newImage, function (error, image) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
 
-    // Send the user if no issues
-    res.send(201, user)
+    // Send the image if no issues encountered
+    res.send(201, image)
   })
 })
 
-// Update a user by their id
-server.put('/users/:id', function (req, res, next) {
+// Update a image by their id
+server.put('/images/:id', function (req, res, next) {
 
   // Make sure name is defined
   if (req.params.name === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('name must be supplied'))
+    return next(new restify.InvalidArgumentError('You need to provide the Image name'))
   }
-  if (req.params.age === undefined ) {
+  if (req.params.url === undefined ) {
     // If there are any errors, pass them to next in the correct format
-    return next(new restify.InvalidArgumentError('age must be supplied'))
+    return next(new restify.InvalidArgumentError('You need to provide the Image URL'))
+  }
+  if (req.params.size === undefined ) {
+    // If there are any errors, pass them to next in the correct format
+    return next(new restify.InvalidArgumentError('You need to provide the size of the image'))
   }
   
-  var newUser = {
+  var newImage = {
 		_id: req.params.id,
 		name: req.params.name, 
-		age: req.params.age
+		url: req.params.url,
+    size: req.params.size
 	}
   
-  // Update the user with the persistence engine
-  usersSave.update(newUser, function (error, user) {
+  // Update the image with the persistence engine
+  imagesSave.update(newImage, function (error, image) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
@@ -113,11 +122,11 @@ server.put('/users/:id', function (req, res, next) {
   })
 })
 
-// Delete user with the given id
-server.del('/users/:id', function (req, res, next) {
+// Delete image with the given id
+server.del('/images/:id', function (req, res, next) {
 
-  // Delete the user with the persistence engine
-  usersSave.delete(req.params.id, function (error, user) {
+  // Delete the image with the persistence engine
+  imagesSave.delete(req.params.id, function (error, image) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
