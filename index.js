@@ -1,4 +1,4 @@
-var SERVER_NAME = 'user-api'
+var SERVER_NAME = 'mapd713'
 var PORT = 5000;
 var HOST = '127.0.0.1';
 var get_counter = 0;
